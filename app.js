@@ -1,8 +1,12 @@
 var express = require('express')
 var path = require('path')
+var mongoose = require('mongoose')
+var Movie = require('./models/movie')
 var bodyParser = require('body-parser')
 var port = process.env.PORT || 3000
 var app = express()
+
+mongoose.connect('mongodb://localhost/imooc')
 
 app.set('views','./views/pages')
 app.set('view engine','jade')
@@ -14,34 +18,14 @@ console.log('imooc started on port ' + port)
 
 
 app.get('/',function(req,res){
-	res.render('index',{
-		title:'影院热度播报',
-		movies:[{
-			title:'机械战警',
-			_id:1,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:2,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:3,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:4,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		},{
-			title:'机械战警',
-			_id:5,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
+	Movie.fetch(function(err, movies){
+		if(err) {
+			console.log(err)
 		}
-		,{
-			title:'机械战警',
-			_id:6,
-			poster:'http://r3.ykimg.com/05160000530EEB63675839160D0B79D5'
-		}]
+		res.render('index',{
+			title:'imooc 首页',
+			movies:movies
+		})
 	})
 })
 
