@@ -58,29 +58,43 @@ app.get('/admin/movie',function(req,res){
 	})
 })
 
+app.get('/admin/update/:id',function(req,res){
+	var id = req.params.id
+
+	if(id){
+		Movie.findById(id,function(err,movie){
+			res.render('admin',{
+				title:'imooc 后台更新页面',
+				movie:movie
+			})
+		})
+	}
+})
+
 //admin post movie
 app.post('/admin/movie/new',function(req,res){
 	var id = req.body.movie._id
 	var movieObj = req.body.movie
+
 	var _movie
 
-	if(id!=='undefined'){
-		Movie.findById(id, function(err,movie){
-			if(err) {
+	if(id !=='undefined'){
+		Movie.findById(id,function(err,movie){
+			if(err){
 				console.log(err)
 			}
 
-			_movie = _.extend(movie, movieObj)
+			_movie = _.extend(movie,movieObj)
 			_movie.save(function(err,movie){
 				if(err){
 					console.log(err)
-				}
+			    }
 
-				res.redirect('/movie' + movie._id)
+			    res.redirect('/movie/'+_movie.id)
 			})
+
 		})
-	}
-	else{
+	}else{
 		_movie = new Movie({
 			doctor:movieObj.doctor,
 			title:movieObj.title,
@@ -91,13 +105,14 @@ app.post('/admin/movie/new',function(req,res){
 			summary:movieObj.summary,
 			flash:movieObj.flash,
 		})
-		_movie.save(function(err,movie){
-			if(err){
-				console.log(err)
-		    }
 
-		    res.redirect('/movie/'+_movie.id)
-		})
+		_movie.save(function(err,movie){
+				if(err){
+					console.log(err)
+			    }
+
+			    res.redirect('/movie/'+_movie.id)
+			})
 	}
 })
 
